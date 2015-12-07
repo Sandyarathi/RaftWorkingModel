@@ -39,12 +39,12 @@ import poke.server.conf.NodeDesc;
 import poke.server.conf.ServerConf;
 import poke.server.management.ManagementInitializer;
 import poke.server.management.ManagementQueue;
-import poke.server.managers.ElectionManager;
 import poke.server.managers.HeartbeatData;
 import poke.server.managers.HeartbeatManager;
 import poke.server.managers.HeartbeatPusher;
 import poke.server.managers.JobManager;
 import poke.server.managers.NetworkManager;
+import poke.server.managers.RaftManager;
 import poke.server.resources.ResourceFactory;
 
 /**
@@ -69,7 +69,7 @@ public class Server {
 	protected JobManager jobMgr;
 	protected NetworkManager networkMgr;
 	protected HeartbeatManager heartbeatMgr;
-	protected ElectionManager electionMgr;
+	protected RaftManager electionMgr;
 
 	/**
 	 * static because we need to get a handle to the factory from the shutdown
@@ -272,7 +272,7 @@ public class Server {
 
 		// create manager for leader election. The number of votes (default 1)
 		// is used to break ties where there are an even number of nodes.
-		electionMgr = ElectionManager.initManager(conf);
+		electionMgr = RaftManager.initManager(conf);
 
 		// create manager for accepting jobs
 		jobMgr = JobManager.initManager(conf);
@@ -292,7 +292,7 @@ public class Server {
 		// manage heartbeatMgr connections
 		HeartbeatPusher conn = HeartbeatPusher.getInstance();
 		conn.start();
-
+		electionMgr.startMonitor();
 		logger.info("Server " + conf.getNodeId() + ", managers initialized");
 	}
 

@@ -133,9 +133,46 @@ message Management {
 
    // declare an election for a new leader 
    optional LeaderElection election = 4;
-
+	optional RaftMessage raftmessage = 5;
    // voting management
    optional VotingBallot vote_declare = 7;
    optional VotingCast vote_cast = 8;
    optional VotingStatus vote_status = 9;
 }	
+
+
+message LogEntry {
+  optional int32 index = 1;
+  optional string data = 2;
+}
+
+message RaftMessage {
+	optional int32 term = 3;
+	optional int32 logIndex = 4;
+	optional int32 previousTerm = 5;
+	optional int32 previousLogIndex = 6;
+	optional int32 leaderID = 8;
+	optional RaftAction raftAction = 7;
+	
+	enum RaftAction {
+		APPEND = 1;
+		REQUESTVOTE = 2;
+		LEADER = 3;
+		VOTE = 4;
+		WHOISTHELEADER = 5;
+		THELEADERIS = 6;
+		APPENDRESPONSE = 7;
+		 }
+
+	optional RaftAppendAction raftAppendAction = 9;
+	
+	enum RaftAppendAction {
+	
+		APPENDHEARTBEAT = 1;
+		APPENDLOG = 2;
+		APPENDVALUE = 3;
+	}
+	
+	optional int32 success = 10;
+	repeated LogEntry entries = 11;
+}

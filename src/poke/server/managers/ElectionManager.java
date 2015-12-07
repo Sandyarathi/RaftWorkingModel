@@ -30,6 +30,7 @@ import poke.server.conf.ServerConf;
 import poke.server.election.Election;
 import poke.server.election.ElectionListener;
 import poke.server.election.FloodMaxElection;
+import poke.server.managers.ConnectionManager.ConnectionState;
 
 /**
  * The election manager is used to determine leadership within the network. The
@@ -215,6 +216,15 @@ public class ElectionManager implements ElectionListener {
 		}
 	}
 
+	public boolean assessCurrentStateOfLeader() {
+				if (firstTime > 0) {
+					this.firstTime--;
+					askWhoIsTheLeader();
+					return false;
+				}
+				else 
+					return true;
+	}
 	/** election listener implementation */
 	@Override
 	public void concludeWith(boolean success, Integer leaderID) {
@@ -260,7 +270,7 @@ public class ElectionManager implements ElectionListener {
 		logger.info("Election started by node " + conf.getNodeId());
 		try {
 
-			ConnectionManager.getConnection(mgmt.getHeader().getOriginator(), true).write(mb.build());
+			ConnectionManager.getConnection(mgmt.getHeader().getOriginator(), ConnectionState.SERVERMGMT).write(mb.build());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -272,7 +282,7 @@ public class ElectionManager implements ElectionListener {
 		MgmtHeader.Builder mhb = MgmtHeader.newBuilder();
 		mhb.setOriginator(conf.getNodeId());
 		mhb.setTime(System.currentTimeMillis());
-		mhb.setSecurityCode(-999); // TODO add security
+		mhb.setSecurityCode(-999); 
 
 		VectorClock.Builder rpb = VectorClock.newBuilder();
 		rpb.setNodeId(conf.getNodeId());
@@ -290,7 +300,7 @@ public class ElectionManager implements ElectionListener {
 		Management.Builder mb = Management.newBuilder();
 		mb.setHeader(mhb.build());
 		mb.setElection(elb.build());
-
+		System.out.println("Broadcasting Message");
 		// now send it to the requester
 		ConnectionManager.broadcast(mb.build());
 	}

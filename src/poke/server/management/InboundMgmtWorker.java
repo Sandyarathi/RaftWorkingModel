@@ -22,8 +22,8 @@ import poke.core.Mgmt.Management;
 import poke.server.management.ManagementQueue.ManagementQueueEntry;
 import poke.server.managers.ElectionManager;
 import poke.server.managers.HeartbeatManager;
-import poke.server.managers.JobManager;
 import poke.server.managers.NetworkManager;
+import poke.server.managers.RaftManager;
 
 /**
  * The inbound management worker is the cortex for all work related to the
@@ -79,41 +79,22 @@ public class InboundMgmtWorker extends Thread {
 					logger.debug("Inbound management message received");
 
 				Management mgmt = (Management) msg.req;
-				if (mgmt.hasBeat()) {
-					/**
-					 * Incoming: this is from a node we requested to create a
-					 * connection (edge) to. In other words, we need to track
-					 * that this connection is healthy by receiving HB messages.
-					 * 
-					 * Incoming are connections this node establishes, which is
-					 * handled by the HeartbeatPusher.
-					 */
+				if (mgmt.hasBeat() || mgmt.hasRaftmessage()) {
+					logger.info("In Inbound Beat ");
 					HeartbeatManager.getInstance().processRequest(mgmt);
-
-					/**
-					 * If we have a network (more than one node), check to see
-					 * if a election manager has been declared. If not, start an
-					 * election.
-					 * 
-					 * The flaw to this approach is from a bootstrap PoV.
-					 * Consider a network of one node (myself), an event-based
-					 * monitor does not detect the leader is myself. However, I
-					 * cannot allow for each node joining the network to cause a
-					 * leader election.
-					 */
-					ElectionManager.getInstance().assessCurrentState(mgmt);
-
-				} else if (mgmt.hasElection()) {
-					ElectionManager.getInstance().processRequest(mgmt);
+					RaftManager.getInstance().processRequest(mgmt);
+					
 				} else if (mgmt.hasGraph()) {
-					NetworkManager.getInstance().processRequest(mgmt, msg.channel);
+					NetworkManager.getInstance().processRequest(mgmt,
+							msg.channel);
 				} else
 					logger.error("Unknown management message");
 
 			} catch (InterruptedException ie) {
 				break;
 			} catch (Exception e) {
-				logger.error("Unexpected processing failure, halting worker.", e);
+				logger.error("Unexpected processing failure, halting worker.",
+						e);
 				break;
 			}
 		}
