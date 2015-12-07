@@ -248,5 +248,12 @@ public class RaftManager implements ElectionListener {
 	public void setLeaderNode(Integer leaderNode) {
 		this.leaderNode = leaderNode;
 	}
+	
+	/**For the inter-cluster configuration**/
+	//instantiate the cluster conf list
+	/*private ClusterConfList clusterConfList;
+	 * include the clusterConfList in initManager method
+	 * The inter cluster set-up is done after the leader election in clusters are done.
+	 */
 
 }

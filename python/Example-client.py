@@ -12,10 +12,10 @@ def buildPing(tag, number):
     r.body.ping.number = number
     
     
-    r.header.originator = "python client"
+    r.header.originator = 1
     r.header.tag = str(tag + number + int(round(time.time() * 1000)))
     r.header.routing_id = comm_pb2.Header.PING
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -44,9 +44,9 @@ def buildJob(name_space, jobAction, ownerId):
     nvs.value = "success"
     r.body.job_op.data.options.node.extend([nvs])
     
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -91,9 +91,9 @@ def buildSignupJob(username, password,firstName, lastName, ownerId):
     
     r.body.job_op.data.options.node.extend([email, psw, fName, lName])
     
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -128,9 +128,9 @@ def buildSigninJob(username, password,ownerId):
     
     r.body.job_op.data.options.node.extend([email, psw])
     
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -153,9 +153,9 @@ def buildCourseDescJob(courseName, ownerId):
     r.body.job_op.data.options.name = "coursename"
     r.body.job_op.data.options.value = courseName
     
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -165,7 +165,7 @@ def buildNS():
     r.body.space_op.action = comm_pb2.NameSpaceOperation.ADDSPACE
 
     
-    r.header.originator = "python client"
+    r.header.originator = 1
     r.header.tag = str(int(round(time.time() * 1000)))
     r.header.routing_id = comm_pb2.Header.NAMESPACES
 
@@ -197,9 +197,9 @@ def buildListCourse(ownerId):
       
     r.body.job_op.data.options.node.extend([uId])
     
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg    
@@ -242,9 +242,9 @@ def buildQuestionJob(myTitle, myDescription, myPostdate, ownerId):
     postdate.value = myPostdate
     
     r.body.job_op.data.options.node.extend([title, me, description, postdate])        
-    r.header.originator = "python client"  
+    r.header.originator = 1 
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -282,9 +282,9 @@ def buildAnswerJob(qId, myDescription, ownerId):
     description.value = myDescription
     
     r.body.job_op.data.options.node.extend([question, me, description])        
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -306,9 +306,9 @@ def buildShowQuestionsJob(ownerId):
     r.body.job_op.data.options.name = "operation"
     r.body.job_op.data.options.value = "QuestionJob"
 
-    r.header.originator = "python client"  
+    r.header.originator = 1 
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -330,9 +330,9 @@ def buildShowAnswersJob(ownerId):
     r.body.job_op.data.options.name = "operation"
     r.body.job_op.data.options.value = "ShowAnswerJob"
 
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(0)
+    r.header.toNode = 0
     
     msg = r.SerializeToString()
     return msg
@@ -352,9 +352,9 @@ def buildCompetitionJob(name_space, jobAction, ownerId):
     r.body.job_op.data.status = comm_pb2.JobDesc.JOBQUEUED
     
         
-    r.header.originator = "python client"  
+    r.header.originator = 1  
     r.header.routing_id = comm_pb2.Header.JOBS
-    r.header.toNode = str(3)
+    r.header.toNode = 3
     
     msg = r.SerializeToString()
     return msg    
@@ -477,7 +477,3 @@ if __name__ == '__main__':
 #    ownerId = 123;
 #    listcourseReq = buildListCourse(name_space, comm_pb2.JobOperation.ADDJOB, ownerId)
 #    sendMsg(listcourseReq, 5573)
-
-
-
-

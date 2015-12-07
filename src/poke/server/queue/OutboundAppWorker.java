@@ -15,11 +15,14 @@
  */
 package poke.server.queue;
 
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 
 import com.google.protobuf.GeneratedMessage;
 
@@ -53,17 +56,23 @@ public class OutboundAppWorker extends Thread {
 
 			try {
 				// block until a message is enqueued
-				GeneratedMessage msg = sq.outbound.take();
+				final GeneratedMessage msg = sq.outbound.take();
 				if (conn.isWritable()) {
-					boolean rtn = false;
 					if (sq.channel != null && sq.channel.isOpen() && sq.channel.isWritable()) {
-						ChannelFuture cf = sq.channel.write(msg);
-
+						final ChannelFuture cf = sq.channel.write(msg);
+						cf.addListener(new ChannelFutureListener() {
+							public void operationComplete(ChannelFuture future) throws InterruptedException {
+					            boolean rtn = cf.isSuccess();
+								if (!rtn) {
+									sq.outbound.putFirst(msg);
+								}
+							}
+					    });
+						
+						sq.channel.flush();
+						
 						// blocks on write - use listener to be async
-						cf.awaitUninterruptibly();
-						rtn = cf.isSuccess();
-						if (!rtn)
-							sq.outbound.putFirst(msg);
+						// cf.awaitUninterruptibly();						
 					}
 
 				} else
