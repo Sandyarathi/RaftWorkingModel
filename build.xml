@@ -83,36 +83,10 @@
 
 	<target name="server0" depends="build">
 		<java fork="yes" maxmemory="1024m" classname="poke.server.Server">
-			<arg value="${basedir}/runtime/localmesh/server0.conf" />
+			<arg value="${basedir}/runtime/mesh1/server0.conf" />
 			<classpath refid="project.classpath" />
 		</java>
 	</target>
 
-	<target name="server1" depends="build">
-		<java fork="yes" maxmemory="1024m" classname="poke.server.Server">
-			<arg value="${basedir}/runtime/localmesh/server1.conf" />
-			<classpath refid="project.classpath" />
-		</java>
-	</target>
-
-	<target name="server2" depends="build">
-		<java fork="yes" maxmemory="1024m" classname="poke.server.Server">
-			<arg value="${basedir}/runtime/localmesh/server2.conf" />
-			<classpath refid="project.classpath" />
-		</java>
-	</target>
-
-	<target name="server3" depends="build">
-		<java fork="yes" maxmemory="1024m" classname="poke.server.Server">
-			<arg value="${basedir}/runtime/localmesh/server3.conf" />
-			<classpath refid="project.classpath" />
-		</java>
-	</target>
-
-	<target name="server4" depends="build">
-		<java fork="yes" maxmemory="1024m" classname="poke.server.Server">
-			<arg value="${basedir}/runtime/localmesh/server4.conf" />
-			<classpath refid="project.classpath" />
-		</java>
-	</target>
+	
 </project>

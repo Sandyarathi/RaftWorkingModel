@@ -56,23 +56,18 @@ public class OutboundAppWorker extends Thread {
 
 			try {
 				// block until a message is enqueued
-				final GeneratedMessage msg = sq.outbound.take();
+				GeneratedMessage msg = sq.outbound.take();
 				if (conn.isWritable()) {
 					if (sq.channel != null && sq.channel.isOpen() && sq.channel.isWritable()) {
-						final ChannelFuture cf = sq.channel.write(msg);
-						cf.addListener(new ChannelFutureListener() {
-							public void operationComplete(ChannelFuture future) throws InterruptedException {
-					            boolean rtn = cf.isSuccess();
-								if (!rtn) {
-									sq.outbound.putFirst(msg);
-								}
-							}
-					    });
-						
+						ChannelFuture cf = sq.channel.write(msg);						
 						sq.channel.flush();
 						
 						// blocks on write - use listener to be async
-						// cf.awaitUninterruptibly();						
+						cf.awaitUninterruptibly();
+						boolean rtn = cf.isSuccess();
+						if (!rtn) {
+							sq.outbound.putFirst(msg);
+						}
 					}
 
 				} else

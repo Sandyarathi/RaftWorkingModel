@@ -47,7 +47,7 @@ public class RaftElection implements Election {
 				MIN_ELECTION_WAIT_TIME_IN_MILLIS,
 				MAX_ELECTION_WAIT_TIME_IN_MILLIS + 1);
 		logger.info(String.format(
-				"Node will wait for %s seconds before triggering re-election",
+				"***Node will wait for %s seconds before triggering re-election****",
 				electionWaitTimeMillis/1000));
 		this.currentNodeState = RaftState.FOLLOWER;
 		this.setLastHeartBeatFromLeaderTimestamp(currentTimeMillis());
@@ -262,13 +262,13 @@ public class RaftElection implements Election {
 		System.out.println("My current state is: " + currentNodeState.toString());
 		if (currentNodeState == RaftState.CANDIDATE) {
 			logger.info(String.format(
-					"Received Vote From Node: %s. Vote count is: %s", req
+					"****Received Vote From Node: %s. Vote count is: %s*****", req
 							.getHeader().getOriginator(), voteCount));
 			logger.info("Size "
 					+ HeartbeatManager.getInstance().outgoingHB.size());
 			if (++voteCount > (HeartbeatManager.getInstance().outgoingHB.size() + 1) / 2) {
 				logger.info(String.format(
-						"Final Vote Count: %s. I am the leader.", voteCount));
+						"****Final Vote Count: %s. I am the leader.*****", voteCount));
 				voteCount = 0;
 				currentNodeState = RaftState.LEADER;
 				setLeaderID(this.nodeID);
@@ -282,6 +282,7 @@ public class RaftElection implements Election {
 	}
 
 	private Management castVote(RaftMessage raftMessage, Management req) {
+		System.out.println("I am casting vote");
 
 		if ((currentNodeState == RaftState.CANDIDATE)
 				|| (currentNodeState == RaftState.FOLLOWER)) {
@@ -291,7 +292,7 @@ public class RaftElection implements Election {
 					&& (raftMessage.getLogIndex() >= this.logMessage
 							.getLogIndex())) {
 				if (this.votedFor != null) {
-					logger.info(String.format("Voting for %s for term %s", req
+					logger.info(String.format("***Voting for %s for term %s***", req
 							.getHeader().getOriginator(), raftMessage.getTerm()));
 				}
 				this.votedFor = raftMessage;
